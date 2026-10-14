@@ -97,7 +97,7 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 	init_device();
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */

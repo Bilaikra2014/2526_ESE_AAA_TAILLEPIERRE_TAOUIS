@@ -6,6 +6,7 @@
  */
 
 #include "app.h"
+#include "motor.h"
 
 #include "user_interface/shell.h"
 
@@ -17,7 +18,17 @@ void init_device(void){
 	hshell1.drv.transmit = shell_uart2_transmit;
 	hshell1.drv.receive = shell_uart2_receive;
 	shell_init(&hshell1);
+	shell_add(&hshell1, "setccr", sh_set_ccr, "Fixe le rapport cyclique : SET_CCR XXXX");
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&shell_uart2_received_char, 1);
+
+    if (motor_init() != HAL_OK)
+    {
+        Error_Handler();
+    }
+    if (motor_pwm_start() != HAL_OK)
+    {
+        Error_Handler();
+    }
 
 	// LED
 //	led_init();
@@ -49,6 +60,7 @@ uint8_t shell_uart2_receive(char *pData, uint16_t size)
 	*pData = shell_uart2_received_char;
 	return 1;
 }
+
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart->Instance == USART2) {

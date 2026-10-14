@@ -1,0 +1,5 @@
+../Core/Src/motor_control/motor.c:14:6:motor_set_duty	2
+../Core/Src/motor_control/motor.c:24:19:motor_init	1
+../Core/Src/motor_control/motor.c:30:19:motor_pwm_start	5
+../Core/Src/motor_control/motor.c:39:19:motor_pwm_stop	5
+../Core/Src/motor_control/motor.c:48:5:sh_set_ccr	5
