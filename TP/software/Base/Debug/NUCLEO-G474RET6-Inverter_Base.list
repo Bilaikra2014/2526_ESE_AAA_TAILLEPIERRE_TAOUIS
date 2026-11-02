@@ -2188,9 +2188,9 @@ void MX_TIM1_Init(void)
  8000f6e:	4b52      	ldr	r3, [pc, #328]	@ (80010b8 <MX_TIM1_Init+0x190>)
  8000f70:	2200      	movs	r2, #0
  8000f72:	605a      	str	r2, [r3, #4]
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_CENTERALIGNED1;
  8000f74:	4b50      	ldr	r3, [pc, #320]	@ (80010b8 <MX_TIM1_Init+0x190>)
- 8000f76:	2200      	movs	r2, #0
+ 8000f76:	2220      	movs	r2, #32
  8000f78:	609a      	str	r2, [r3, #8]
   htim1.Init.Period = 4249;
  8000f7a:	4b4f      	ldr	r3, [pc, #316]	@ (80010b8 <MX_TIM1_Init+0x190>)
