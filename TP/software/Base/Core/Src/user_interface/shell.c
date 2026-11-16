@@ -133,6 +133,9 @@ int shell_add(h_shell_t* h_shell, char* string_func_code, shell_func_pointer_t p
 	return -1;
 }
 
+
+
+
 /**
  * @brief Executes a shell command.
  *

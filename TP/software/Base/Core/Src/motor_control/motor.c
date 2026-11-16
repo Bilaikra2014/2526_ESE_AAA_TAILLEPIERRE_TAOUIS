@@ -81,3 +81,25 @@ int sh_set_ccr(h_shell_t* h_shell, int argc, char** argv)
     h_shell->drv.transmit(h_shell->print_buffer, size);
     return 0;
 }
+
+int sh_start(h_shell_t* h_shell, int argc, char** argv){
+	motor_set_duty(2200);
+//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+//	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+	motor_pwm_start();
+	return 0;
+}
+
+int sh_stop(h_shell_t* h_shell, int argc, char** argv){
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+	HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
+
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+	return 0;
+}
+
+
+
+
+

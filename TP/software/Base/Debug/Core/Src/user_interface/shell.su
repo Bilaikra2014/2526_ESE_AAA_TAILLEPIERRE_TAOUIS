@@ -4,5 +4,5 @@
 ../Core/Src/user_interface/shell.c:75:12:sh_test_list	40	static
 ../Core/Src/user_interface/shell.c:95:6:shell_init	24	static
 ../Core/Src/user_interface/shell.c:120:5:shell_add	24	static
-../Core/Src/user_interface/shell.c:145:12:shell_exec	64	static
-../Core/Src/user_interface/shell.c:186:5:shell_run	24	static
+../Core/Src/user_interface/shell.c:148:12:shell_exec	64	static
+../Core/Src/user_interface/shell.c:189:5:shell_run	24	static

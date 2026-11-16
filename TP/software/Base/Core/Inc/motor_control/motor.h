@@ -27,5 +27,7 @@ HAL_StatusTypeDef motor_pwm_start(void);
 HAL_StatusTypeDef motor_pwm_stop(void);
 void motor_set_duty(uint32_t ccr);
 int sh_set_ccr(h_shell_t* h_shell, int argc, char** argv);
+int sh_start(h_shell_t* h_shell, int argc, char** argv);
+int sh_stop(h_shell_t* h_shell, int argc, char** argv);
 
 #endif /* INC_MOTOR_CONTROL_MOTOR_H_ */

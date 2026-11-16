@@ -3,3 +3,5 @@
 ../Core/Src/motor_control/motor.c:30:19:motor_pwm_start	8	static
 ../Core/Src/motor_control/motor.c:39:19:motor_pwm_stop	8	static
 ../Core/Src/motor_control/motor.c:48:5:sh_set_ccr	40	static
+../Core/Src/motor_control/motor.c:85:5:sh_start	24	static
+../Core/Src/motor_control/motor.c:93:5:sh_stop	24	static

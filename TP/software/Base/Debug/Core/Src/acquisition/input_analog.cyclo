@@ -1,0 +1,5 @@
+../Core/Src/acquisition/input_analog.c:20:19:input_analog_init	4
+../Core/Src/acquisition/input_analog.c:45:6:HAL_ADC_ConvCpltCallback	4
+../Core/Src/acquisition/input_analog.c:71:9:current_get_ma	1
+../Core/Src/acquisition/input_analog.c:81:5:sh_current	1
+../Core/Src/acquisition/input_analog.c:105:5:sh_current_zero	1
