@@ -66,7 +66,20 @@ Le moteur est branché entre les sorties des bras U et V du hacheur, avec une al
 |α = 50 %	| moteur à l'arrêt, courant ≈ 0      |
 |α = 70 % | moteur en marche, appel de courant |
 
+<div align="center">
+  <img src="./image/Rapport_cyclique_60%.png" alt="Schematic 1"><br><br>
+</div>
+
 **Problème observé :**
 On observe la présence de pics de courant. À l'arrêt, la force électromotrice du moteur est nulle, donc le courant n'est limité que par la résistance de l'induit. Un échelon de tension appliqué d'un coup provoque un fort appel de courant, qui peut dépasser le courant nominal du moteur.
 
 **7.1 Commande de la vitesse en boucle ouverte**
+
+Deux commandes shell sont ajoutées (même mécanisme que setccr, avec shell_add dans init_device()) :
+
+|Commande | Action                                                                                     |
+|---------|--------------------------------------------------------------------------------------------|
+|start	  | fixe le rapport cyclique à 50 % (vitesse nulle, CCR1 = PWM_MAX / 2) puis démarre les 4 PWM |
+|stop     | 	désactive la génération des PWM (motor_pwm_stop())                                       |
+
+**Tests :**
