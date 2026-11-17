@@ -51,3 +51,22 @@ Tests :
 |setccr 2125 | CCR = 2125, soit 50 % (vitesse nulle)     |
 |setccr 3000 | CCR = 3000, soit 70,6 %                   |
 |setccr 9999 | saturé à 4037                             |
+
+
+**Séance 2 :**
+
+**6.3 Commande de vitesse par le shell**
+**Branchement :**
+
+Le moteur est branché entre les sorties des bras U et V du hacheur, avec une alimentation de puissance réglée à 40 V et limitée à 5 A.
+
+**Essais :**
+|Essai    | Observation                        |
+|---------|------------------------------------|
+|α = 50 %	| moteur à l'arrêt, courant ≈ 0      |
+|α = 70 % | moteur en marche, appel de courant |
+
+**Problème observé :**
+On observe la présence de pics de courant. À l'arrêt, la force électromotrice du moteur est nulle, donc le courant n'est limité que par la résistance de l'induit. Un échelon de tension appliqué d'un coup provoque un fort appel de courant, qui peut dépasser le courant nominal du moteur.
+
+**7.1 Commande de la vitesse en boucle ouverte**
