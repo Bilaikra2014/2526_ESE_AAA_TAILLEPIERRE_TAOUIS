@@ -67,7 +67,8 @@ Le moteur est branché entre les sorties des bras U et V du hacheur, avec une al
 |α = 70 % | moteur en marche, appel de courant |
 
 <div align="center">
-  <img src="./image/tek00003.png" alt="test"><br><br>
+  <img src="./image/tek00006.png"><br><br>
+  <img src="./image/tek00007.png">
 </div>
 
 **Problème observé :**
