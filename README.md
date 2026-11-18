@@ -55,8 +55,7 @@ Tests :
 **Test :**
 
 <div align="center">
-  <img src="./image/tek00006.png"><br><br>
-  <img src="./image/tek00007.png">
+  <img src="./image/tek00005.png"><br><br>
 </div>
 
 
@@ -74,7 +73,8 @@ Le moteur est branché entre les sorties des bras U et V du hacheur, avec une al
 |α = 70 % | moteur en marche, appel de courant |
 
 <div align="center">
-  <img src="./image/tek00005.png"><br><br>
+  <img src="./image/tek00006.png"><br><br>
+  <img src="./image/tek00007.png">
 </div>
 
 **Problème observé :**
