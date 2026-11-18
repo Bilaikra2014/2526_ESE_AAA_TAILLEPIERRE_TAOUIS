@@ -52,6 +52,13 @@ Tests :
 |setccr 3000 | CCR = 3000, soit 70,6 %                   |
 |setccr 9999 | saturé à 4037                             |
 
+**Test :**
+
+<div align="center">
+  <img src="./image/tek00006.png"><br><br>
+  <img src="./image/tek00007.png">
+</div>
+
 
 **Séance 2 :**
 
@@ -67,8 +74,7 @@ Le moteur est branché entre les sorties des bras U et V du hacheur, avec une al
 |α = 70 % | moteur en marche, appel de courant |
 
 <div align="center">
-  <img src="./image/tek00006.png"><br><br>
-  <img src="./image/tek00007.png">
+  <img src="./image/tek00005.png"><br><br>
 </div>
 
 **Problème observé :**
@@ -83,4 +89,36 @@ Deux commandes shell sont ajoutées (même mécanisme que setccr, avec shell_add
 |start	  | fixe le rapport cyclique à 50 % (vitesse nulle, CCR1 = PWM_MAX / 2) puis démarre les 4 PWM |
 |stop     | 	désactive la génération des PWM (motor_pwm_stop())                                       |
 
-**Tests :**
+**7.2. Mesure de courant**
+Les courants à mesurer sont les suivants :
+
+|Courant    | Utilité                                                              |
+|-----------|----------------------------------------------------------------------|
+|I_U	      | courant moteur (la MCC est entre U et V, donc I_moteur = I_U = −I_V) |
+|I_V        | redondant avec I_U                                                   |
+|I_bus      | courant absorbé sur l'alimentation (appel de courant, protection)    |
+
+Mesures retenues : **I_U** et **I_bus**.
+
+**Fonction de transfert**
+D'après les documentations, le GO 10-SME/SP3 est alimenté en 3,3 V et mesure ±25 A crête, avec une sensibilité de 50 mV/A. Sa sortie est :
+Uout = Uref + 0,05 × Ip
+Conversion avec l'ADC (12 bits, Vref = 3,3 V) :
+Uadc = N × 3,3 / 4095          (0,806 mV par pas)
+I    = (Uadc − Uref) / 0,05    (≈ 16,1 mA par pas)
+
+**Pins du STM32 :**
+
+|Signal   | Connecteur | Pin | Channel ADC |
+|---------|------------|-----|-------------|
+|U_Imes	  | CN7 pin 30 | PA1 |	ADC1_IN2   |
+|V_Imes   | CN10 pin 24| PB1 |  ADC1_IN12  |
+|W_Imes   | CN7 pin 34 | PB0 |  ADC1_IN15  |
+|Bus_Imes | CN7 pin 35 | PC2 |  ADC1_IN8   |
+
+**Mesure en polling :**
+Le code est dans acquisition/input_analog.c. Pour chaque lecture, adc_read_raw() configure le canal ADC1 voulu (PA1 pour U_Imes, PC2 pour Bus_Imes), lance une conversion logicielle (HAL_ADC_Start), attend la fin (HAL_ADC_PollForConversion) et lit le résultat.
+Deux commandes shell servent aux tests : zero (mesure d'offset) et current (affiche I_U et I_bus en mA).
+
+**Résultats en polling :**
+
