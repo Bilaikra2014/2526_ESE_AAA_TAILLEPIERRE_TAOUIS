@@ -121,4 +121,24 @@ Le code est dans acquisition/input_analog.c. Pour chaque lecture, adc_read_raw()
 Deux commandes shell servent aux tests : zero (mesure d'offset) et current (affiche I_U et I_bus en mA).
 
 **Résultats en polling :**
+<div align="center">
+  <img src="./image/Polling.png"><br><br>
+</div>
 
+Offsets mesurés après zero : U = 2054, bus = 2068. Ils sont proches du milieu de l'échelle (2048), ce qui est cohérent avec une référence de capteur d'environ 1,65 V.
+
+|Condition                      | I_U   | I_bus  |
+|-------------------------------|-------|--------|
+|PWM arrêtées, juste après zero	|142 mA |	142 mA |
+|après start                    |1809 mA| 1126 mA|
+|setccr 3000                    |2158 mA| 2269 mA|
+
+**Analyse**
+Courant nul : la lecture d'environ 142 mA correspond à 9 pas ADC (16 mA par pas). C'est le bruit de l'ADC et du capteur.
+Dispersion avec la PWM en marche : Le polling convertit à un instant quelconque de la période PWM, donc la valeur lue dépend de cet instant. Cela explique les écarts entre lectures successives, et le fait que I_bus peut dépasser I_U alors que sa valeur moyenne vaut (2α − 1) × I_moteur.
+
+Pour obtenir des mesures reproductibles et fiables, l'instant d'acquisition doit être fixé par rapport à la PWM, c'est l'objectif de la chaîne Timer/ADC/DMA.
+
+**Acquisition Timer / ADC / DMA**
+
+Principe :
