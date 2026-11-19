@@ -39,6 +39,11 @@ Rapport cyclique 60 % :
 Bras U : les deux transistors d'un même bras ne sont jamais passants en même temps, signaux de 0 à 3,3 V.
 Temps mort : les curseurs mesurent Δt = 200,0 ns entre l'extinction d'un signal et l'allumage de l'autre, ce qui correspond à DTG = 34.
 
+<div align="center">
+  <img src="./image/bras_U.png"><br><br>
+  <img src="./image/dead_time.png">
+</div>
+
 **6.2 Commande de vitesse par le shell**
 
 La commande à taper dans le terminal est setccr XXXX
@@ -162,4 +167,28 @@ Offset : les 64 premières séquences (ou la commande zero) servent à calculer 
 </div>
 
 **Comparaison avec le polling :** On obtient des resultats beaucoup plus fiable avec cette chaine d'acquisition
+
+**7.3 Mesure de vitesse**
+
+**Capteur de vitesse**
+
+|Signal   | Pin STM32   | Fonction TIM3  |
+|---------|-------------|----------------|
+|ENC_A	  |142 mA       |	142 mA         |
+|ENC_B    |1809 mA      | 1126 mA        |
+
+Résolution du codeur : **1024 impulsions par tour**. En mode encodeur x4 (TI1 et TI2),
+le compteur de TIM3 évolue de 4 × 1024 = **4096 pas par tour**.
+
+**Fonction de transfert :**
+    vitesse [tr/min] = Δcompteur / (4096 × Te) × 60
+
+avec Te la période de mesure en secondes et Δcompteur la variation du compteur TIM3
+entre deux mesures. TIM3 est un compteur 16 bits : Δcompteur est calculé en entier signé
+16 bits ((int16_t)(cnt_new - cnt_old)), ce qui gère le débordement et donne le sens de rotation.
+Le signe de Δcompteur donne le sens de rotation.
+
+**Constante de temps mécanique**
+
+Pour la déterminer, on applique un échelon de tension au moteur et on enregistre la vitesse mesurée par la sonde tachymétrique sur l'oscilloscope.
 
