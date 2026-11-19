@@ -5,6 +5,7 @@
 Le code est organisé par fonction, comme demandé : app.c initialise les modules, motor.c gère la PWM et les commandes du moteur, le shell sert d'interface avec l'utilisateur. Aucune fonction du code applicatif ne cite directement l'UART2 : seules shell_uart2_transmit et shell_uart2_receive dans app.c font le lien avec le matériel.
 
 **Câblage de la MCC**
+
 <img width="745" height="482" alt="image" src="https://github.com/user-attachments/assets/d5386873-7927-4e78-90bf-3edacb979484" />
 
 **6.1 Génération des 4 PWM**
