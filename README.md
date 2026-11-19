@@ -191,4 +191,34 @@ Le signe de Δcompteur donne le sens de rotation.
 **Constante de temps mécanique**
 
 Pour la déterminer, on applique un échelon de tension au moteur et on enregistre la vitesse mesurée par la sonde tachymétrique sur l'oscilloscope.
+Par calcul à l'aide des constantes du MP77S, on a :
+Constante de temps mécanique : **Tm** = J/f = 0.002/(0.037*60/(1000*2*pi)) = **5,7 s**
 
+**Fréquence de l'asservissement**
+
+Période d'asservissement retenue : Te = 5 ms.
+En effet, la boucle de vitesse doit être plus rapide que la dynamique mécanique. Avec Tm = 5,7 ms, une période d'échantillonnage Te de 5 ms (soit au moins 10 fois plus rapide que Tm) convient. Elle doit aussi permettre une résolution de vitesse suffisante car à Te trop court, Δcompteur est trop faible.
+
+Ainsi la frequence d'asservissement associée est fe = 1/Te = 200 Hz
+
+**Code :**
+
+Le code est dans acquisition/input_encoder.c et .h. 
+
+|Élément   | Réglage                                                                                                |
+|----------|--------------------------------------------------------------------------------------------------------|
+|TIM3	     | Channels = Encoder Mode, TI1 and TI2, prescaler 0, période 65535, filtre d'entrée 5                    |
+|TIM7      | prescaler 169, période 4999 : 170 MHz / 170 / 5000 → interruption toutes les 5 ms                      |
+|NVIC      | TIM7 global interrupt activée, priorité de préemption 1 (la base de temps HAL, TIM6, reste prioritaire)|
+
+**Fonctionnement :**
+
+input_encoder_init() démarre le codeur avec HAL_TIM_Encoder_Start, mémorise la valeur initiale du compteur, puis démarre TIM7 avec HAL_TIM_Base_Start_IT.
+TIM7 cadence la mesure. HAL_GetTick() n'est pas utilisé, sa résolution de 1 ms donnerait une erreur de 20 % sur 5 ms. TIM6 est pris par la base de temps HAL, TIM1 par la PWM et TIM3 par le codeur.
+À chaque interruption de TIM7, input_encoder_update() lit le compteur de TIM3, calcule delta = (int16_t)(count - count_prev) puis la vitesse delta × MS_PER_MIN / (ENC_COUNTS_PER_REV × SPEED_TE_MS). Le signe donne le sens de rotation.
+input_encoder_update() est appelée dans la zone USER CODE BEGIN Callback 1 de HAL_TIM_PeriodElapsedCallback (dans main.c), avec un test htim->Instance == TIM7.
+La commande shell **rpm** affiche la vitesse en tr/min et le delta brut du compteur. Elle est enregistrée dans init_device() avec shell_add.
+
+Les fonctionnalités précédentes (PWM, setccr, start, stop, current, zero, chaîne ADC/DMA) ne sont pas modifiées.
+
+Le code a été ajouté mais n'a pas été testé.
