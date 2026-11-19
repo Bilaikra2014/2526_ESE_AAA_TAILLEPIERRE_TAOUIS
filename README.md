@@ -40,7 +40,7 @@ Bras U : les deux transistors d'un même bras ne sont jamais passants en même t
 Temps mort : les curseurs mesurent Δt = 200,0 ns entre l'extinction d'un signal et l'allumage de l'autre, ce qui correspond à DTG = 34.
 
 <div align="center">
-  <img src="./image/Rapport_cyclique_60%.png"><br><br>
+  <img src="./image/Rapport_cyclique_60.png"><br><br>
   <img src="./image/dead_time.png">
 </div>
 
