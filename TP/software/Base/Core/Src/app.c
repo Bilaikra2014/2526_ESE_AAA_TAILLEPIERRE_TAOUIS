@@ -9,6 +9,7 @@
 #include "motor.h"
 #include "acquisition/input_analog.h"
 #include "user_interface/shell.h"
+#include "acquisition/input_encoder.h"
 
 static char shell_uart2_received_char;
 
@@ -23,6 +24,7 @@ void init_device(void){
 	shell_add(&hshell1,"stop",sh_stop,"Generation de la pm stop");
 	shell_add(&hshell1, "current", sh_current,      "Courants I_U et I_bus en mA");
 	shell_add(&hshell1, "zero",    sh_current_zero, "Mesure l'offset des capteurs (moteur arrete)");
+	shell_add(&hshell1, "rpm", sh_rpm, "Vitesse du moteur en tr/min");
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&shell_uart2_received_char, 1);
 
 	if (input_analog_init() != HAL_OK)
@@ -31,6 +33,11 @@ void init_device(void){
 	}
 
     if (motor_init() != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (input_encoder_init() != HAL_OK)
     {
         Error_Handler();
     }

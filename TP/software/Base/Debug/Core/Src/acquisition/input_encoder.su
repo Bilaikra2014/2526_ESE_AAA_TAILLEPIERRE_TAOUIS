@@ -1,0 +1,4 @@
+../Core/Src/acquisition/input_encoder.c:21:19:input_encoder_init	8	static
+../Core/Src/acquisition/input_encoder.c:36:6:input_encoder_update	16	static
+../Core/Src/acquisition/input_encoder.c:46:9:input_encoder_get_rpm	4	static
+../Core/Src/acquisition/input_encoder.c:54:5:sh_rpm	40	static

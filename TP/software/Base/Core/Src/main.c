@@ -27,7 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app.h"
-
+#include "acquisition/input_encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,6 +97,7 @@ int main(void)
   MX_TIM3_Init();
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
 	init_device();
 	//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -181,7 +182,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  if (htim->Instance == TIM7)
+    {
+      input_encoder_update();
+    }
   /* USER CODE END Callback 1 */
 }
 
