@@ -39,6 +39,11 @@ Rapport cyclique 60 % :
 Bras U : les deux transistors d'un même bras ne sont jamais passants en même temps, signaux de 0 à 3,3 V.
 Temps mort : les curseurs mesurent Δt = 200,0 ns entre l'extinction d'un signal et l'allumage de l'autre, ce qui correspond à DTG = 34.
 
+<div align="center">
+  <img src="./image/bras_U.png"><br><br>
+  <img src="./image/dead_time.png">
+</div>
+
 **6.2 Commande de vitesse par le shell**
 
 La commande à taper dans le terminal est setccr XXXX
@@ -55,8 +60,7 @@ Tests :
 **Test :**
 
 <div align="center">
-  <img src="./image/tek00006.png"><br><br>
-  <img src="./image/tek00007.png">
+  <img src="./image/tek00005.png"><br><br>
 </div>
 
 
@@ -74,7 +78,8 @@ Le moteur est branché entre les sorties des bras U et V du hacheur, avec une al
 |α = 70 % | moteur en marche, appel de courant |
 
 <div align="center">
-  <img src="./image/tek00005.png"><br><br>
+  <img src="./image/tek00006.png"><br><br>
+  <img src="./image/tek00007.png">
 </div>
 
 **Problème observé :**
@@ -121,4 +126,69 @@ Le code est dans acquisition/input_analog.c. Pour chaque lecture, adc_read_raw()
 Deux commandes shell servent aux tests : zero (mesure d'offset) et current (affiche I_U et I_bus en mA).
 
 **Résultats en polling :**
+<div align="center">
+  <img src="./image/Polling.png"><br><br>
+</div>
+
+<div align="center">
+  <img src="./image/tek00009.png"><br><br>
+</div>
+
+Offsets mesurés après zero : U = 2054, bus = 2068. Ils sont proches du milieu de l'échelle (2048), ce qui est cohérent avec une référence de capteur d'environ 1,65 V.
+
+|Condition                      | I_U   | I_bus  |
+|-------------------------------|-------|--------|
+|PWM arrêtées, juste après zero	|142 mA |	142 mA |
+|après start                    |1809 mA| 1126 mA|
+|setccr 3000                    |2158 mA| 2269 mA|
+
+**Analyse**
+Courant nul : la lecture d'environ 142 mA correspond à 9 pas ADC (16 mA par pas). C'est le bruit de l'ADC et du capteur.
+Dispersion avec la PWM en marche : Le polling convertit à un instant quelconque de la période PWM, donc la valeur lue dépend de cet instant. Cela explique les écarts entre lectures successives, et le fait que I_bus peut dépasser I_U alors que sa valeur moyenne vaut (2α − 1) × I_moteur.
+
+Pour obtenir des mesures reproductibles et fiables, l'instant d'acquisition doit être fixé par rapport à la PWM, c'est l'objectif de la chaîne Timer/ADC/DMA.
+
+**Acquisition Timer / ADC / DMA**
+
+Principe :
+TIM1 (center-aligned) → CH4 (comparateur interne) → TRGO (OC4REF) → ADC1 (scan, 2 canaux) → DMA circulaire → buffer[2]
+
+Déclenchement : TIM1 est le timer de la PWM. Son canal 4, sans sortie, passe à un état actif quand le compteur redescend sous CCR4. Ce front est envoyé en TRGO et déclenche l'ADC une seule fois par période PWM (20 kHz).
+Instant de mesure : CCR4 = ADC_TRIGGER_CCR (250, soit environ 1,5 µs avant le creux du compteur). La mesure est centrée sur le milieu de l'état haut du bras U, loin des fronts de commutation, donc sans bruit de commutation.
+Acquisition : l'ADC1 est en mode scan sur 2 channels (rang 1 : PA1 / U_Imes, rang 2 : PC2 / Bus_Imes). Le DMA, en mode circulaire, copie les résultats dans adc_dma_buffer sans intervention du CPU.
+Offset : les 64 premières séquences (ou la commande zero) servent à calculer l'offset de chaque capteur.
+
+<div align="center">
+  <img src="./image/DMA.png"><br><br>
+</div>
+
+<div align="center">
+  <img src="./image/tek00010.png"><br><br>
+</div>
+
+**Comparaison avec le polling :** On obtient des resultats beaucoup plus fiable avec cette chaine d'acquisition
+
+**7.3 Mesure de vitesse**
+
+**Capteur de vitesse**
+
+|Signal   | Pin STM32   | Fonction TIM3  |
+|---------|-------------|----------------|
+|ENC_A	  |142 mA       |	142 mA         |
+|ENC_B    |1809 mA      | 1126 mA        |
+
+Résolution du codeur : **1024 impulsions par tour**. En mode encodeur x4 (TI1 et TI2),
+le compteur de TIM3 évolue de 4 × 1024 = **4096 pas par tour**.
+
+**Fonction de transfert :**
+    vitesse [tr/min] = Δcompteur / (4096 × Te) × 60
+
+avec Te la période de mesure en secondes et Δcompteur la variation du compteur TIM3
+entre deux mesures. TIM3 est un compteur 16 bits : Δcompteur est calculé en entier signé
+16 bits ((int16_t)(cnt_new - cnt_old)), ce qui gère le débordement et donne le sens de rotation.
+Le signe de Δcompteur donne le sens de rotation.
+
+**Constante de temps mécanique**
+
+Pour la déterminer, on applique un échelon de tension au moteur et on enregistre la vitesse mesurée par la sonde tachymétrique sur l'oscilloscope.
 
