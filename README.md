@@ -125,6 +125,10 @@ Deux commandes shell servent aux tests : zero (mesure d'offset) et current (affi
   <img src="./image/Polling.png"><br><br>
 </div>
 
+<div align="center">
+  <img src="./image/tek00009.png"><br><br>
+</div>
+
 Offsets mesurés après zero : U = 2054, bus = 2068. Ils sont proches du milieu de l'échelle (2048), ce qui est cohérent avec une référence de capteur d'environ 1,65 V.
 
 |Condition                      | I_U   | I_bus  |
@@ -142,3 +146,20 @@ Pour obtenir des mesures reproductibles et fiables, l'instant d'acquisition doit
 **Acquisition Timer / ADC / DMA**
 
 Principe :
+TIM1 (center-aligned) → CH4 (comparateur interne) → TRGO (OC4REF) → ADC1 (scan, 2 canaux) → DMA circulaire → buffer[2]
+
+Déclenchement : TIM1 est le timer de la PWM. Son canal 4, sans sortie, passe à un état actif quand le compteur redescend sous CCR4. Ce front est envoyé en TRGO et déclenche l'ADC une seule fois par période PWM (20 kHz).
+Instant de mesure : CCR4 = ADC_TRIGGER_CCR (250, soit environ 1,5 µs avant le creux du compteur). La mesure est centrée sur le milieu de l'état haut du bras U, loin des fronts de commutation, donc sans bruit de commutation.
+Acquisition : l'ADC1 est en mode scan sur 2 channels (rang 1 : PA1 / U_Imes, rang 2 : PC2 / Bus_Imes). Le DMA, en mode circulaire, copie les résultats dans adc_dma_buffer sans intervention du CPU.
+Offset : les 64 premières séquences (ou la commande zero) servent à calculer l'offset de chaque capteur.
+
+<div align="center">
+  <img src="./image/DMA.png"><br><br>
+</div>
+
+<div align="center">
+  <img src="./image/tek00010.png"><br><br>
+</div>
+
+**Comparaison avec le polling :** On obtient des resultats beaucoup plus fiable avec cette chaine d'acquisition
+
